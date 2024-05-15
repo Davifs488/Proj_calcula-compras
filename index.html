@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aplicativo de Compras</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        background-color: #343a40;
+        color: #fff;
+      }
+      .container {
+        padding: 20px;
+      }
+      .product-list {
+        list-style-type: none;
+        padding: 0;
+      }
+      .product-list li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #6c757d;
+      }
+      .product-list li:last-child {
+        border-bottom: none;
+      }
+      .product-list li button {
+        padding: 5px 10px;
+      }
+      #total {
+        text-align: right;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-center">Aplicativo de Compras</h1>
+
+      <div class="form-group">
+        <label for="product-name">Nome do Produto:</label>
+        <input
+          type="text"
+          class="form-control"
+          id="product-name"
+          placeholder="Nome do Produto"
+        />
+      </div>
+      <div class="form-group">
+        <label for="product-price">Preço do Produto:</label>
+        <input
+          type="number"
+          class="form-control"
+          id="product-price"
+          placeholder="Preço do Produto"
+        />
+      </div>
+      <button class="btn btn-primary mb-3" onclick="addProduct()">
+        Adicionar Produto
+      </button>
+
+      <ul class="product-list" id="product-list"></ul>
+
+      <div id="total">
+        Total de Produtos: <span id="total-products">0</span> | Total: R$
+        <span id="total-value">0.00</span>
+      </div>
+    </div>
+
+    <script>
+      let products = [];
+
+      function renderProductList() {
+        const productList = document.getElementById("product-list");
+        productList.innerHTML = "";
+        products.forEach((product, index) => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+        <span>${product.name} - R$ ${product.price.toFixed(2)}</span>
+        <button class="btn btn-danger btn-sm" onclick="deleteProduct(${index})">Excluir</button>
+        <button class="btn btn-warning btn-sm" onclick="editProduct(${index})">Editar</button>
+      `;
+          productList.appendChild(li);
+        });
+        updateTotal();
+      }
+
+      function updateTotal() {
+        const totalProductsElement = document.getElementById("total-products");
+        const totalValueElement = document.getElementById("total-value");
+        const totalProducts = products.length;
+        const total = products.reduce((acc, curr) => acc + curr.price, 0);
+        totalProductsElement.textContent = totalProducts;
+        totalValueElement.textContent = total.toFixed(2);
+      }
+
+      function addProduct() {
+        const productName = document.getElementById("product-name").value;
+        const productPrice = parseFloat(
+          document.getElementById("product-price").value
+        );
+        if (productName && !isNaN(productPrice)) {
+          products.push({ name: productName, price: productPrice });
+          renderProductList();
+          document.getElementById("product-name").value = "";
+          document.getElementById("product-price").value = "";
+        } else {
+          alert("Por favor, insira um nome e um preço válido para o produto.");
+        }
+      }
+
+      function deleteProduct(index) {
+        products.splice(index, 1);
+        renderProductList();
+      }
+
+      function editProduct(index) {
+        const newProductName = prompt("Insira o novo nome do produto:");
+        const newProductPrice = parseFloat(
+          prompt("Insira o novo preço do produto:")
+        );
+        if (newProductName && !isNaN(newProductPrice)) {
+          products[index].name = newProductName;
+          products[index].price = newProductPrice;
+          renderProductList();
+        } else {
+          alert("Por favor, insira um nome e um preço válido para o produto.");
+        }
+      }
+    </script>
+  </body>
+</html>
